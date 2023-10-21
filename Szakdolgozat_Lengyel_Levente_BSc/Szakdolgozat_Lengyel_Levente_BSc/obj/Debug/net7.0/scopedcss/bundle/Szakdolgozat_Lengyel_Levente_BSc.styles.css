@@ -40,10 +40,13 @@ button.accept-policy[b-b0ra3jinkp] {
   line-height: inherit;
 }
 
-.footer[b-b0ra3jinkp] {
-  position: absolute;
+#footer[b-b0ra3jinkp] {
+  position: fixed;
   bottom: 0;
   width: 100%;
+  background-color: white;
+  color: black;
+  text-align: center;
   white-space: nowrap;
   line-height: 60px;
 }

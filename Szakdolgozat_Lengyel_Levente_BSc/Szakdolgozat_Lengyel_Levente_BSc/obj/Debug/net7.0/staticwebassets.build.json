@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "j5c/gmKgvHolV1ywayNaT/FKuGE8FnaRRMuulv5HRTs=",
+  "Hash": "WAnatitJanlsQWPdovf0pxZlDyTubjURAgbrWLE5uUA=",
   "Source": "Szakdolgozat_Lengyel_Levente_BSc",
   "BasePath": "_content/Szakdolgozat_Lengyel_Levente_BSc",
   "Mode": "Default",
@@ -51,6 +51,23 @@
       "OriginalItemSpec": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\obj\\Debug\\net7.0\\scopedcss\\projectbundle\\Szakdolgozat_Lengyel_Levente_BSc.bundle.scp.css"
     },
     {
+      "Identity": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\css\\home.css",
+      "SourceId": "Szakdolgozat_Lengyel_Levente_BSc",
+      "SourceType": "Discovered",
+      "ContentRoot": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\",
+      "BasePath": "_content/Szakdolgozat_Lengyel_Levente_BSc",
+      "RelativePath": "css/home.css",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\css\\home.css"
+    },
+    {
       "Identity": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\css\\site.css",
       "SourceId": "Szakdolgozat_Lengyel_Levente_BSc",
       "SourceType": "Discovered",
@@ -83,6 +100,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\home-page-icon.png",
+      "SourceId": "Szakdolgozat_Lengyel_Levente_BSc",
+      "SourceType": "Discovered",
+      "ContentRoot": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\",
+      "BasePath": "_content/Szakdolgozat_Lengyel_Levente_BSc",
+      "RelativePath": "home-page-icon.png",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\home-page-icon.png"
     },
     {
       "Identity": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\js\\site.js",

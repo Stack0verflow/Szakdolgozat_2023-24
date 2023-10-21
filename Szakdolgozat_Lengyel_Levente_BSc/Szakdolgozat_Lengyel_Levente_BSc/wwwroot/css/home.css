@@ -1,0 +1,10 @@
+﻿#home-page-icon-image {
+    width: 50px;
+    height: 50px;
+}
+
+#home-page-text-div {
+    border-left: 2px black solid;
+    border-right: 2px black solid;
+    padding: 0 10px;
+}

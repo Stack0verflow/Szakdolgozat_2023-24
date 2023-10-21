@@ -5,12 +5,20 @@
       "PackagePath": "staticwebassets\\Szakdolgozat_Lengyel_Levente_BSc.bundle.scp.css"
     },
     {
+      "Id": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\css\\home.css",
+      "PackagePath": "staticwebassets\\css\\home.css"
+    },
+    {
       "Id": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\css\\site.css",
       "PackagePath": "staticwebassets\\css\\site.css"
     },
     {
       "Id": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\favicon.ico",
       "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\home-page-icon.png",
+      "PackagePath": "staticwebassets\\home-page-icon.png"
     },
     {
       "Id": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\wwwroot\\js\\site.js",
