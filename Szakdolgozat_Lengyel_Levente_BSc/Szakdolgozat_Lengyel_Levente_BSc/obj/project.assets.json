@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "F:\\RiderProjects\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc.csproj",
+      "projectUniqueName": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc.csproj",
       "projectName": "Szakdolgozat_Lengyel_Levente_BSc",
-      "projectPath": "F:\\RiderProjects\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc.csproj",
+      "projectPath": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc.csproj",
       "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
-      "outputPath": "F:\\RiderProjects\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\obj\\",
+      "outputPath": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Szakdolgozat_Lengyel_Levente_BSc\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\User\\AppData\\Roaming\\NuGet\\NuGet.Config"

@@ -9,37 +9,37 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Szakdolgozat_Lengyel_Levente_BSc
 build_property.RootNamespace = Szakdolgozat_Lengyel_Levente_BSc
-build_property.ProjectDir = F:\RiderProjects\Szakdolgozat_Lengyel_Levente_BSc\Szakdolgozat_Lengyel_Levente_BSc\
+build_property.ProjectDir = F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Szakdolgozat_Lengyel_Levente_BSc\
 build_property.RazorLangVersion = 7.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = F:\RiderProjects\Szakdolgozat_Lengyel_Levente_BSc\Szakdolgozat_Lengyel_Levente_BSc
+build_property.MSBuildProjectDirectory = F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Szakdolgozat_Lengyel_Levente_BSc
 build_property._RazorSourceGeneratorDebug = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Home/Index.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Home/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxJbmRleC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Home/Privacy.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Home/Privacy.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcSG9tZVxQcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Shared/Error.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXEVycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Shared/_ValidationScriptsPartial.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/_ViewImports.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/_ViewImports.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdJbXBvcnRzLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/_ViewStart.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/_ViewStart.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[F:/RiderProjects/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Shared/_Layout.cshtml]
+[F:/GitHub projects/Szakdolgozat_2023-24/Szakdolgozat_Lengyel_Levente_BSc/Szakdolgozat_Lengyel_Levente_BSc/Views/Shared/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3NcU2hhcmVkXF9MYXlvdXQuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = b-b0ra3jinkp
