@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Szakdolgozat_Lengyel_Levente_BSc.props" />
+</Project>
