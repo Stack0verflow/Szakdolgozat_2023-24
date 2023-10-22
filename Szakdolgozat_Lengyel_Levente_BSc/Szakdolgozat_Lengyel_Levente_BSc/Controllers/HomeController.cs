@@ -18,6 +18,16 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Page1()
+    {
+        return View();
+    }
+    
+    public IActionResult Page2()
+    {
+        return View();
+    }
+    
     public IActionResult Info()
     {
         return View();
