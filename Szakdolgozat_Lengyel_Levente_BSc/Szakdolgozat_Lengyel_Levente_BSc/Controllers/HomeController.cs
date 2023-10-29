@@ -18,7 +18,7 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Page1()
+    public IActionResult Database()
     {
         return View();
     }

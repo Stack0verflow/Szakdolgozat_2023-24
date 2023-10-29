@@ -6,3 +6,17 @@
 #home-page-text-div {
     padding: 0 10px;
 }
+
+#home-page-text-div p {
+    font-size: 15pt;
+}
+
+.page-links {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.page-links:hover {
+    color: indianred;
+}
