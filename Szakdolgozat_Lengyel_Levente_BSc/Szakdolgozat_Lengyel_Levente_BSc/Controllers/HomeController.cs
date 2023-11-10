@@ -17,16 +17,6 @@ public class HomeController : Controller
     {
         return View();
     }
-
-    public IActionResult Database()
-    {
-        return View();
-    }
-    
-    public IActionResult Page2()
-    {
-        return View();
-    }
     
     public IActionResult Info()
     {

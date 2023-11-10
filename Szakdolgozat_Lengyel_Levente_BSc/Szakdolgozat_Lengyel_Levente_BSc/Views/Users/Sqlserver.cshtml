@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Szakdolgozat_Lengyel_Levente_BSc.Models.Users>
+
+@{
+    ViewData["Title"] = "MS SQL";
+    ViewBag.Title = "MS SQL";
+    Layout = "_Layout";
+}
+
+<div class="text-center">
+    <h1 class="display-4">@ViewData["Title"]</h1>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Id)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.FirstName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastName)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Password)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.BirthDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.HealthCareNumber)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.CurrentAddress)
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach(var user in Model) {
+        <tr>
+            <td>@user.Id</td>
+            <td>@user.FirstName</td>
+            <td>@user.LastName</td>
+            <td>@user.Password</td>
+            <td>@user.BirthDate</td>
+            <td>@user.HealthCareNumber</td>
+            <td>@user.CurrentAddress</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+<!--TODO form-->
