@@ -37,7 +37,6 @@ public class Users : IUsers
             users.Add(user);
         }
         
-        Console.WriteLine(users);
         return users;
     }
 
@@ -46,9 +45,41 @@ public class Users : IUsers
         throw new NotImplementedException();
     }
 
-    public Users GetUser(int id)
+    public IEnumerable<Models.Users> GetUser(int id, string password, string db)
     {
-        throw new NotImplementedException();
+        List<Models.Users> users = new List<Models.Users>();
+        string connectionString = "";
+        switch (db)
+        {
+            case "sqlserver":
+                connectionString = Configuration["ConnectionStrings:SqlServer"] ?? throw new InvalidOperationException();
+                break;
+            case "mysql":
+                connectionString = "mysqlconn";
+                break;
+            case "sqlite":
+                connectionString = "sqliteconn";
+                break;
+        }
+        SqlConnection connection = new SqlConnection(connectionString);
+        string query = "SELECT * FROM Users WHERE Id = " + id + " AND Password = '" + password + "';";
+        SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection);
+        DataTable dataTable = new DataTable();
+        dataAdapter.Fill(dataTable);
+        foreach (DataRow dataRow in dataTable.Rows)
+        {
+            Models.Users user = new Models.Users();
+            user.Id = Convert.ToInt32(dataRow["Id"]);
+            user.FirstName = dataRow["FirstName"].ToString() ?? throw new InvalidOperationException();
+            user.LastName = dataRow["LastName"].ToString() ?? throw new InvalidOperationException();
+            user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
+            user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
+            user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
+            user.CurrentAddress = dataRow["CurrentAddress"].ToString() ?? throw new InvalidOperationException();
+            users.Add(user);
+        }
+
+        return users;
     }
 
     public void DeleteUser(int id, Models.Users user)

@@ -20,3 +20,15 @@
 .page-links:hover {
     color: indianred;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    width: 300px;
+    margin: 0 auto 30px;
+}
+
+form input[type=submit] {
+    margin-top: 10px;
+}

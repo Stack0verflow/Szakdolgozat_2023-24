@@ -14,7 +14,11 @@ public class UsersController : Controller
     
     public IActionResult Sqlserver()
     {
-        var users = _usersDao.GetUsers();
-        return View(users);
+        // var users = _usersDao.GetUsers();
+        int id = Convert.ToInt32(Request.Query["id"].ToString() == "" ? "0" : Request.Query["id"].ToString());
+        string password = Request.Query["password"].ToString();
+        string db = "sqlserver";
+        Console.WriteLine(id + " " + password + " " + db);
+        return View(_usersDao.GetUser(id, password, db));
     }
 }
