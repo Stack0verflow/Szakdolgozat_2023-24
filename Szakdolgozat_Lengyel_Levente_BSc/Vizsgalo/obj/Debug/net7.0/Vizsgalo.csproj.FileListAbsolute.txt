@@ -1,0 +1,15 @@
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.csproj.AssemblyReference.cache
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.GeneratedMSBuildEditorConfig.editorconfig
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.AssemblyInfoInputs.cache
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.AssemblyInfo.cs
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.csproj.CoreCompileInputs.cache
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\Vizsgalo.exe
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\Vizsgalo.deps.json
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\Vizsgalo.runtimeconfig.json
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\Vizsgalo.dll
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\Vizsgalo.pdb
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.dll
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\refint\Vizsgalo.dll
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.pdb
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.genruntimeconfig.cache
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\ref\Vizsgalo.dll
