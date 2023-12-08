@@ -10,8 +10,8 @@ public class Users
     public string FirstName { get; set; }
     [Required]
     public string LastName { get; set; }
-    public string Password { get; set; }
-    public DateTime BirthDate { get; set; }
-    public int HealthCareNumber { get; set; }
+    // public string Password { get; set; }
+    // public DateTime BirthDate { get; set; }
+    // public int HealthCareNumber { get; set; }
     public string CurrentAddress { get; set; }
 }

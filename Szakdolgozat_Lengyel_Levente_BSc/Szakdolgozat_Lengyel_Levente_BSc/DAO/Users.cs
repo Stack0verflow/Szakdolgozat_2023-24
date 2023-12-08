@@ -31,9 +31,9 @@ public class Users : IUsers
             user.Id = Convert.ToInt32(dataRow["Id"]);
             user.FirstName = dataRow["FirstName"].ToString() ?? throw new InvalidOperationException();
             user.LastName = dataRow["LastName"].ToString() ?? throw new InvalidOperationException();
-            user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
-            user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
-            user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
+            // user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
+            // user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
+            // user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
             user.CurrentAddress = dataRow["CurrentAddress"].ToString() ?? throw new InvalidOperationException();
             users.Add(user);
         }
@@ -46,7 +46,7 @@ public class Users : IUsers
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Models.Users> GetUser(int id, string password, string db)
+    public IEnumerable<Models.Users> GetUser(string id, string password, string db)
     {
         List<Models.Users> users = new List<Models.Users>();
         string connectionString = "";
@@ -55,7 +55,7 @@ public class Users : IUsers
             case "sqlserver":
                 connectionString = Configuration["ConnectionStrings:SqlServer"] ?? throw new InvalidOperationException();
                 SqlConnection connection = new SqlConnection(connectionString);
-                string query = "SELECT * FROM Users WHERE Id = " + id + " AND Password = '" + password + "';";
+                string query = "SELECT Id, FirstName, LastName, CurrentAddress FROM Users WHERE Id = " + id + " AND Password = '" + password + "';";
                 SqlDataAdapter dataAdapter = new SqlDataAdapter(query, connection);
                 DataTable dataTable = new DataTable();
                 dataAdapter.Fill(dataTable);
@@ -65,9 +65,9 @@ public class Users : IUsers
                     user.Id = Convert.ToInt32(dataRow["Id"]);
                     user.FirstName = dataRow["FirstName"].ToString() ?? throw new InvalidOperationException();
                     user.LastName = dataRow["LastName"].ToString() ?? throw new InvalidOperationException();
-                    user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
-                    user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
-                    user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
+                    // user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
+                    // user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
+                    // user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
                     user.CurrentAddress = dataRow["CurrentAddress"].ToString() ?? throw new InvalidOperationException();
                     users.Add(user);
                 }
@@ -80,7 +80,7 @@ public class Users : IUsers
                 {
                     conn = new MySqlConnection(connectionString);
                     conn.Open();
-                    using (MySqlCommand query2 = new MySqlCommand("SELECT * FROM Users WHERE Id = " + id + " AND Password = '" + password + "';", conn))
+                    using (MySqlCommand query2 = new MySqlCommand("SELECT Id, FirstName, LastName, CurrentAddress FROM Users WHERE Id = " + id + " AND Password = '" + password + "';", conn))
                     {
                         using (MySqlDataReader dr = query2.ExecuteReader())
                         {
@@ -90,9 +90,9 @@ public class Users : IUsers
                                 user.Id = Convert.ToInt32(dr["Id"]);
                                 user.FirstName = dr["FirstName"].ToString() ?? throw new InvalidOperationException();
                                 user.LastName = dr["LastName"].ToString() ?? throw new InvalidOperationException();
-                                user.Password = dr["Password"].ToString() ?? throw new InvalidOperationException();
-                                user.BirthDate = Convert.ToDateTime(dr["BirthDate"]);
-                                user.HealthCareNumber = Convert.ToInt32(dr["HealthCareNumber"]);
+                                // user.Password = dr["Password"].ToString() ?? throw new InvalidOperationException();
+                                // user.BirthDate = Convert.ToDateTime(dr["BirthDate"]);
+                                // user.HealthCareNumber = Convert.ToInt32(dr["HealthCareNumber"]);
                                 user.CurrentAddress = dr["CurrentAddress"].ToString() ?? throw new InvalidOperationException();
                                 users.Add(user);
                             }
