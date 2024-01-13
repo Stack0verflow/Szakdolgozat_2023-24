@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using MySql.Data.MySqlClient;
+using Microsoft.Data.Sqlite;
 
 namespace Szakdolgozat_Lengyel_Levente_BSc.DAO;
 
@@ -107,7 +108,28 @@ public class Users : IUsers
                 }
                 break;
             case "sqlite":
-                connectionString = "sqliteconn";
+                connectionString = Configuration["ConnectionStrings:SQLite"] ?? throw new InvalidOperationException();
+                SqliteConnection sqliteConnection = new SqliteConnection(connectionString);
+                sqliteConnection.Open();
+                
+                var command = sqliteConnection.CreateCommand();
+                command.CommandText = "SELECT Id, FirstName, LastName, CurrentAddress FROM users WHERE Id = " + id + " AND Password = '" + password + "'";
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        Models.Users user = new Models.Users();
+                        user.Id = reader.GetInt32(0);
+                        user.FirstName = reader.GetString(1);
+                        user.LastName = reader.GetString(2);
+                        // user.Password = dr["Password"].ToString() ?? throw new InvalidOperationException();
+                        // user.BirthDate = Convert.ToDateTime(dr["BirthDate"]);
+                        // user.HealthCareNumber = Convert.ToInt32(dr["HealthCareNumber"]);
+                        user.CurrentAddress = reader.GetString(3);
+                        users.Add(user);
+                    }
+                }
                 break;
         }
 

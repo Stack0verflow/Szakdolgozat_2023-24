@@ -14,8 +14,7 @@ public class UsersController : Controller
     
     public IActionResult Sqlserver()
     {
-        // var users = _usersDao.GetUsers();
-        string id = Request.Query["id"].ToString() == "" ? "0" : Request.Query["id"].ToString(); //this is a string to make injection available
+        string id = Request.Query["id"].ToString() == "" ? "0" : Request.Query["id"].ToString(); // this is a string to make injection available
         string password = Request.Query["password"].ToString();
         string db = "sqlserver";
         Console.WriteLine(id + " " + password + " " + db);
@@ -24,10 +23,18 @@ public class UsersController : Controller
     
     public IActionResult Mysql()
     {
-        // var users = _usersDao.GetUsers();
-        string id = Request.Query["id"].ToString() == "" ? "0" : Request.Query["id"].ToString(); //this is a string to make injection available
+        string id = Request.Query["id"].ToString() == "" ? "0" : Request.Query["id"].ToString(); // this is a string to make injection available
         string password = Request.Query["password"].ToString();
         string db = "mysql";
+        Console.WriteLine(id + " " + password + " " + db);
+        return View(_usersDao.GetUser(id, password, db));
+    }
+    
+    public IActionResult Sqlite()
+    {
+        string id = Request.Query["id"].ToString() == "" ? "0" : Request.Query["id"].ToString(); // this is a string to make injection available
+        string password = Request.Query["password"].ToString();
+        string db = "sqlite";
         Console.WriteLine(id + " " + password + " " + db);
         return View(_usersDao.GetUser(id, password, db));
     }
