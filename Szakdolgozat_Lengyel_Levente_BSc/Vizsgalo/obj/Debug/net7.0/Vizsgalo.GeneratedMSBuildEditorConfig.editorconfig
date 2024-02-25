@@ -9,3 +9,5 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = Vizsgalo
 build_property.ProjectDir = F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\
+build_property.EnableComHosting = 
+build_property.EnableGeneratedComInterfaceComImportInterop = 
