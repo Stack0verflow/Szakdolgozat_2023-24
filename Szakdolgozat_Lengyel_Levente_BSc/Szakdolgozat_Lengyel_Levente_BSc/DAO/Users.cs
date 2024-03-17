@@ -104,7 +104,7 @@ public class Users : IUsers
                 }
                 catch (MySqlException ex)
                 {
-                    Console.WriteLine(ex.Message);
+                    Console.WriteLine("MySQL exception happened (" + DateTime.Now + "): " + ex.Message);
                 }
                 break;
             case "sqlite":
