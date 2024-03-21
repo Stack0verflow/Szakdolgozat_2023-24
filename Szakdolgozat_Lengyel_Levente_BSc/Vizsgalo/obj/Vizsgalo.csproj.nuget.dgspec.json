@@ -38,6 +38,10 @@
         "net7.0": {
           "targetAlias": "net7.0",
           "dependencies": {
+            "ConsoleGUI": {
+              "target": "Package",
+              "version": "[1.4.2, )"
+            },
             "MySql.Data": {
               "target": "Package",
               "version": "[8.2.0, )"

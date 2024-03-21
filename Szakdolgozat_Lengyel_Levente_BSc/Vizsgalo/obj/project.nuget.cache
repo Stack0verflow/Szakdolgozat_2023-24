@@ -1,10 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "X8qRuKo5kgnqARFvK37zN8KbTUO/ljV8ajI8Q9qTDW4UAczeVOfEdN9Oc0EnB4FZZ0OIcmj1pTDV9uA9yVMSHg==",
+  "dgSpecHash": "tklgl4knqxyKZPe0S5EYnKhi5w3D1UkVNA5IM+vMims0gK1l5mh5Qtt/2owFEJVLWpqgX5HyxB5nCrUvdAYuFg==",
   "success": true,
   "projectFilePath": "F:\\GitHub projects\\Szakdolgozat_2023-24\\Szakdolgozat_Lengyel_Levente_BSc\\Vizsgalo\\Vizsgalo.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\lengy\\.nuget\\packages\\bouncycastle.cryptography\\2.2.1\\bouncycastle.cryptography.2.2.1.nupkg.sha512",
+    "C:\\Users\\lengy\\.nuget\\packages\\consolegui\\1.4.2\\consolegui.1.4.2.nupkg.sha512",
     "C:\\Users\\lengy\\.nuget\\packages\\google.protobuf\\3.21.9\\google.protobuf.3.21.9.nupkg.sha512",
     "C:\\Users\\lengy\\.nuget\\packages\\k4os.compression.lz4\\1.3.5\\k4os.compression.lz4.1.3.5.nupkg.sha512",
     "C:\\Users\\lengy\\.nuget\\packages\\k4os.compression.lz4.streams\\1.3.5\\k4os.compression.lz4.streams.1.3.5.nupkg.sha512",

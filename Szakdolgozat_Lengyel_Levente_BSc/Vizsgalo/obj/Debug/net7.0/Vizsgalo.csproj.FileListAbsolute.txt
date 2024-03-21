@@ -39,3 +39,4 @@ F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgal
 F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.csproj.CopyComplete
 F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\obj\Debug\net7.0\Vizsgalo.sourcelink.json
+F:\GitHub projects\Szakdolgozat_2023-24\Szakdolgozat_Lengyel_Levente_BSc\Vizsgalo\bin\Debug\net7.0\ConsoleGUI.dll
