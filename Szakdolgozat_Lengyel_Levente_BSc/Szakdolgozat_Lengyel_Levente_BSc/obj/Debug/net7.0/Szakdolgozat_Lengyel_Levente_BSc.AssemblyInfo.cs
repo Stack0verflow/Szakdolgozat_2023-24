@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Szakdolgozat_Lengyel_Levente_BSc")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+bb248ca2929fa4b6ced70b7a7ca18edca135bc4c")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f1be58e017f77f30f09860c6d3bd0ede4a0b88e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Szakdolgozat_Lengyel_Levente_BSc")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Szakdolgozat_Lengyel_Levente_BSc")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
