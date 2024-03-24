@@ -1,7 +1,5 @@
 ﻿using System.Data;
-using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using MySql.Data.MySqlClient;
 using Microsoft.Data.Sqlite;
 
@@ -32,9 +30,6 @@ public class Users : IUsers
             user.Id = Convert.ToInt32(dataRow["Id"]);
             user.FirstName = dataRow["FirstName"].ToString() ?? throw new InvalidOperationException();
             user.LastName = dataRow["LastName"].ToString() ?? throw new InvalidOperationException();
-            // user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
-            // user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
-            // user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
             user.CurrentAddress = dataRow["CurrentAddress"].ToString() ?? throw new InvalidOperationException();
             users.Add(user);
         }
@@ -42,15 +37,10 @@ public class Users : IUsers
         return users;
     }
 
-    public void AddUser(Models.Users user)
-    {
-        throw new NotImplementedException();
-    }
-
     public IEnumerable<Models.Users> GetUser(string id, string password, string db)
     {
         List<Models.Users> users = new List<Models.Users>();
-        string connectionString = "";
+        string connectionString;
         switch (db)
         {
             case "sqlserver":
@@ -66,9 +56,6 @@ public class Users : IUsers
                     user.Id = Convert.ToInt32(dataRow["Id"]);
                     user.FirstName = dataRow["FirstName"].ToString() ?? throw new InvalidOperationException();
                     user.LastName = dataRow["LastName"].ToString() ?? throw new InvalidOperationException();
-                    // user.Password = dataRow["Password"].ToString() ?? throw new InvalidOperationException();
-                    // user.BirthDate = Convert.ToDateTime(dataRow["BirthDate"]);
-                    // user.HealthCareNumber = Convert.ToInt32(dataRow["HealthCareNumber"]);
                     user.CurrentAddress = dataRow["CurrentAddress"].ToString() ?? throw new InvalidOperationException();
                     users.Add(user);
                 }
@@ -134,15 +121,5 @@ public class Users : IUsers
         }
 
         return users;
-    }
-
-    public void DeleteUser(int id, Models.Users user)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void EditUser(int id, Models.Users user)
-    {
-        throw new NotImplementedException();
     }
 }

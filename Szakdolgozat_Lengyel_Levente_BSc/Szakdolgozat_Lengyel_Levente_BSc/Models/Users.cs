@@ -14,4 +14,9 @@ public class Users
     // public DateTime BirthDate { get; set; }
     // public int HealthCareNumber { get; set; }
     public string CurrentAddress { get; set; }
+
+    public override string ToString()
+    {
+        return $"Id: {Id}, FirstName: {FirstName}, LastName: {LastName}, CurrentAddress: {CurrentAddress}";
+    }
 }
