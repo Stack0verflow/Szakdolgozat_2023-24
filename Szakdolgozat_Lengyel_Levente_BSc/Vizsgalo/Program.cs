@@ -1,5 +1,8 @@
 ﻿using System.Net;
 using System.Diagnostics;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 
 namespace Vizsgalo
@@ -19,7 +22,9 @@ namespace Vizsgalo
 
         private static HttpClient _httpClient = new()
         {
-            BaseAddress = new Uri("http://localhost:5227/Users")
+            /* YOU CAN CHANGE THE BASE ADDRESS MANUALLY BEFORE RUNNING THE APP */
+            //BaseAddress = new Uri("http://localhost:5227/Users")
+            BaseAddress = new Uri("https://localhost:7002/Users")
         };
 
         public static async Task Main()
@@ -92,11 +97,6 @@ namespace Vizsgalo
                     case ConsoleKey.D7:
                         HandleCertificateCheck(httpClient);
                         break;
-
-                    // OPTION 8: change target endpoint
-                    /*case ConsoleKey.D8:
-                        SetEndpoint(httpClient);
-                        break;*/
 
                     // OPTION 9: run a full analysis and calculate a score
                     case ConsoleKey.D9:
@@ -217,7 +217,7 @@ namespace Vizsgalo
                 result = CheckCertificate(address);
             } else
             {
-                string httpAddress = "http://" + address;
+                string httpAddress = "https://" + address;
                 result = CheckCertificate(httpAddress);
             }
 
@@ -360,10 +360,6 @@ namespace Vizsgalo
                 "\n> Press '6' to scan the server for open ports" +
                 "\n> Press '7' to check the validity of the server's certificate");
                 
-            /*Console.ForegroundColor = ConsoleColor.DarkMagenta;
-            Console.WriteLine("\nCHANGE SETTINGS");
-            Console.WriteLine("> Press '8' to change target endpoint");*/
-                
             InfoColors.WriteToConsole(InfoColors.Operations3,
                 "\nFULL ANALYSIS" +
                 "\n> Press '9' to run a full analysis and read results");
@@ -455,7 +451,7 @@ namespace Vizsgalo
             string result = HandleCertificateCheck(httpClient, false);
             string[] response = result.Split(" | ");
             
-            return response.Length == 0 || (response.Length == 1 && !response[0].Contains("Expiration")) ? 0 : 1;
+            return response.Length == 0 || (response.Length == 1 && !response[0].Contains("Valid")) ? 0 : 1;
         }
 
         
@@ -573,16 +569,20 @@ namespace Vizsgalo
             string sqlserverCast = "CONVERT(varchar(max), " + columnName + ")";
             string mysqlCast = "CONVERT(" + columnName + ", CHAR) COLLATE utf8mb4_hungarian_ci";
             string sqliteCast = columnName;
-            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", " + (_db == "sqlserver" ? sqlserverCast : _db == "mysql" ? mysqlCast : sqliteCast) + " FROM " + tableName + ";--";
+            string url = "?" + firstQueryParameter + "=" + UnionStart + _unionColumnsString + ", " +
+                         (_db == "sqlserver" ? sqlserverCast : _db == "mysql" ? mysqlCast : sqliteCast)
+                         + " FROM " + tableName + ";--";
             // sends GET request to server
-            Console.WriteLine("Getting all data using " + _db + "...");
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                "\nGetting all data using " + _db + "...");
             string[] response = await GetRequest(httpClient, url);
             return string.Join(" | ", response);
         }
         
         static async Task<string> GetAllDataFromTable(HttpClient httpClient, string tableName, string firstQueryParameter)
         {
-            Console.WriteLine("Getting all data using " + _db + "...");
+            InfoColors.WriteToConsole(InfoColors.ResponseCategory,
+                "\nGetting all data using " + _db + "...");
             
             string res = await GetTableColumnNames(httpClient, tableName, firstQueryParameter);
             string[] columnNames = res.Split(" | ");
@@ -659,41 +659,44 @@ namespace Vizsgalo
         {
             try
             {
-                using (HttpClientHandler handler = new HttpClientHandler())
+                try
                 {
-                    using (HttpClient client = new HttpClient(handler))
+                    const string serverAddress = "localhost";
+                    const int port = 7002;
+                    using (TcpClient client = new TcpClient(serverAddress, port))
                     {
-                        InfoColors.WriteToConsole(InfoColors.ScanningStartText,
-                            "Checking " + address + " for any certificates...");
-                        HttpResponseMessage response = client.GetAsync(address).Result;
-
-                        if (response.IsSuccessStatusCode)
+                        // creates an SslStream to secure the connection
+                        using (SslStream sslStream = new SslStream(client.GetStream(), false))
                         {
-                            // Server certificate information can be accessed here
-                            var certificates = handler.ClientCertificates;
+                            // authenticates the server
+                            sslStream.AuthenticateAsClient(serverAddress);
 
-                            if(certificates.Count == 0)
+                            // retrieves the server certificate
+                            X509Certificate? serverCertificate = sslStream.RemoteCertificate;
+
+                            if (serverCertificate != null)
                             {
-                                return "\nThe server did not provide any certificates.";
+                                X509Certificate2 cert2 = new X509Certificate2(serverCertificate);
+                                
+                                Console.WriteLine($"Server Certificate Information:");
+                                string subject = cert2.Subject;
+                                string issuer = cert2.Issuer;
+                                DateTime expiry = cert2.NotAfter;
+                                
+                                return "Certificate info:" +
+                                    "\nSubject: " + subject +
+                                    "\nIssuer: " + issuer +
+                                    (DateTime.Compare(expiry, DateTime.Now) < 0 ? "\nExpired (on " : "\nValid (through ") +
+                                    expiry + ")";
                             }
-
-                            InfoColors.WriteToConsole(InfoColors.ResponseCategory,
-                                "\nThe server provides these certificates:");
-                            List<string> certificatesList = new List<string>();
-                            for (int i = 0; i < certificates.Count; i++)
-                            {
-                                string expirationDate = certificates[i].GetExpirationDateString();
-
-                                string certificateResult =
-                                    $"\nCertificate #{i + 1}: {certificates[i]}\nExpiration date: {expirationDate}";
-                                certificatesList.Add(certificateResult);
-                            }
-                            return string.Join(" | ", certificatesList);
+                            
+                            return "\nThe server did not provide any certificates.";
                         }
-
-                        InfoColors.WriteToConsole(InfoColors.StatusError, 
-                            "HTTP request failed with status code: " + response.StatusCode);
                     }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error checking {address}: {ex.Message}");
                 }
             }
             catch (Exception ex)
@@ -793,7 +796,7 @@ namespace Vizsgalo
             string[] columnNames = columnNamesString.Split(" | ");
             string[] columnTypes = columnTypesString.Split(" | ");
 
-            // Calculate the maximum length of column names
+            // calculates the maximum length of column names
             int maxColumnNameLength = columnNames.Max(name => name.Length);
             string response = "Column name".PadRight(maxColumnNameLength + 5) + "Column type";
             

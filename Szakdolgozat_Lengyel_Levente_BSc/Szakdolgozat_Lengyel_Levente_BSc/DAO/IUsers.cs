@@ -2,6 +2,5 @@
 
 public interface IUsers
 {
-    public IEnumerable<Models.Users> GetUsers();
     public IEnumerable<Models.Users> GetUser(string id, string password, string db);
 }
