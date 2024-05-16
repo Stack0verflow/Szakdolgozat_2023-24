@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Vizsgalo")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59618b78849237f9f5fbb511bc7ba7a6fbc702c7")]
 [assembly: System.Reflection.AssemblyProductAttribute("Vizsgalo")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Vizsgalo")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

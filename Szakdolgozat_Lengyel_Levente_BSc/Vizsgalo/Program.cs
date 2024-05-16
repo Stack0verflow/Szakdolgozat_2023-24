@@ -19,6 +19,7 @@ namespace Vizsgalo
         private static string _dbVersion = "";
         private const string IsSqlServerOrMySql = "@@version;--";
         private const string IsSqlite = "sqlite_version();--";
+        private const string NmapPath = "C:\\Program Files (x86)\\Nmap\\nmap.exe";
 
         private static HttpClient _httpClient = new()
         {
@@ -124,7 +125,7 @@ namespace Vizsgalo
             if (schemaName != "")
             {
                 InfoColors.WriteToConsole(InfoColors.ResponseCategory,
-                    "\nAll tables in the given database:");
+                    "\nAll tables in the given schema:");
                 string response = await GetTableNamesInSchema(httpClient, schemaName, firstParameter);
                 InfoColors.WriteToConsole(InfoColors.ResponseResultText, response);
             }
@@ -169,7 +170,7 @@ namespace Vizsgalo
         static async Task HandleAllDataFromTable(HttpClient httpClient, string firstParameter)
         {
             InfoColors.WriteToConsole(InfoColors.UserInputHeader,
-                "\nEnter the name of the database:");
+                "\nEnter the name of the table:");
             string tableName = Console.ReadLine() ?? "";
             Console.WriteLine();
             if (tableName != "")
@@ -242,7 +243,7 @@ namespace Vizsgalo
         static void SetEndpoint(HttpClient httpClient)
         {
             InfoColors.WriteToConsole(InfoColors.UserInputHeader,
-                "Enter the endpoint of the target URL (e.g. /Sqlserver/");
+                "Enter the endpoint of the target URL (e.g. /Sqlserver/ )");
             string endPoint = Console.ReadLine() ?? "/Sqlserver/";
             if (endPoint == "")
             {
@@ -352,8 +353,8 @@ namespace Vizsgalo
                 "\n> Press '1' to get all schema names in the current database" +
                 "\n> Press '2' to get all table names in the given schema" +
                 "\n> Press '3' to get the given table's schema" +
-                "\n> Press '4' to get all data from a specific database column" +
-                "\n> Press '5' to get all data from the given database");
+                "\n> Press '4' to get all data from a specific table column" +
+                "\n> Press '5' to get all data from a given table");
                 
             InfoColors.WriteToConsole(InfoColors.Operations2,
                 "\nNETWORK AND SERVER OPERATIONS" +
@@ -631,12 +632,12 @@ namespace Vizsgalo
         static string ScanForOpenPorts(string arguments)
         {
             InfoColors.WriteToConsole(InfoColors.ScanningStartText,"\nScanning in progress...");
-            string nmapPath = "C:\\Program Files (x86)\\Nmap\\nmap.exe";
+            
             string result;
             
             using (Process process = new Process())
             {
-                process.StartInfo.FileName = nmapPath;
+                process.StartInfo.FileName = NmapPath;
                 process.StartInfo.Arguments = arguments;
                 process.StartInfo.RedirectStandardOutput = true;
                 process.StartInfo.UseShellExecute = false;
